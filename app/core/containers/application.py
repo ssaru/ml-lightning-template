@@ -3,6 +3,20 @@ import logging.config
 from dependency_injector import containers, providers
 
 from ...config import AppConfig
+from ...core.patterns.registry import DatasetRegistry
+
+
+class Datasets(containers.DeclarativeContainer):
+    config = providers.Configuration()
+    # TODO. Dataset Config 추가
+    config.from_pydantic(AppConfig.dataset)
+
+    instance = DatasetRegistry.get(config.name)
+
+    dataset = providers.Singleton(
+        instance,
+        config.params,
+    )
 
 
 class Gateways(containers.DeclarativeContainer):

@@ -21,6 +21,27 @@ class Logger(BaseConfig):
     handler: List[str]
 
 
+class Dataset(BaseConfig):
+    name: str
+    # NOTE. Dataset Class의 params는 일반화하기 어려워 Dict로 정의
+    params: Dict
+
+
+class DataLoader(BaseConfig):
+    name: str = "BaseDataLoader"
+    # NOTE. DataLoader의 params는 일반화하기 어려워 Dict로 정의
+    # PyTorch에서 정의하는 DataLoader params의 기본 구성은 아래와 같음
+    # `dataset`은 application 로드 시, 동적으로 삽입
+    # {
+    #   "dataset": None,
+    #   "batch_size": 1,
+    #   "shuffle": None,
+    #   "num_workers": 0,
+    #   "drop_last": False
+    # }
+    params: Dict
+
+
 class AppConfig(Singleton):
     PROJECT_NAME: str
     LOGGER: Logger

@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from . import BaseModel
+from app.core.interfaces.models import BaseModel
 
 
 class MnistModel(BaseModel):

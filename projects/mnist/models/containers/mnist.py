@@ -3,7 +3,7 @@ from typing import Tuple
 import torch
 import torch.nn as nn
 
-from . import BaseModelContainer
+from app.core.interfaces.models.containers import BaseModelContainer
 
 
 class MNISTModelContainer(BaseModelContainer):
