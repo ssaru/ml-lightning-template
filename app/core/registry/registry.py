@@ -1,5 +1,3 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
-# pyre-ignore-all-errors[2,3]
 from typing import Any, Dict, Iterable, Iterator, Tuple
 
 
@@ -75,12 +73,8 @@ class Registry(Iterable[Tuple[str, Any]]):
         return name in self._obj_map
 
     def __repr__(self) -> str:
-        # NOTE. tabulate 없이 print해야함
-        # table_headers = ["Names", "Objects"]
-        # table = tabulate(
-        #     self._obj_map.items(), headers=table_headers, tablefmt="fancy_grid"
-        # )
-        return f"Registry of \n{self._obj_map.items()}:\n"
+        items = "\n".join([f'\t{k}: {v}' for k, v in self._obj_map.items()])
+        return f"Registry of {self._name}:\n{items}"
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         return iter(self._obj_map.items())
