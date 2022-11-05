@@ -2,14 +2,10 @@ from typing import Optional, TypeVar
 
 from torch.utils.data import DataLoader, Dataset
 
-from ....patterns.registry import DataLoaderRegistry
-
 T_co = TypeVar('T_co', covariant=True)
 T = TypeVar('T')
 
 
-# NOTE. BaseDataLoader는 추상클래스이기도 하면서, 그대로 사용할 수 있기에 Registry에 등록
-@DataLoaderRegistry.register
 class BaseDataLoader(DataLoader):
     """It follows PyTorch's DataLoader Interface.
 

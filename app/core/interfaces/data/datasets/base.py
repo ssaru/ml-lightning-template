@@ -5,8 +5,6 @@ from torch.utils.data import Dataset
 
 from ....patterns.registry import DatasetRegistry
 
-# NOTE. BaseDataset class는 추상 클래스라 Registry에 등록하지 않음
-
 
 class BaseDataset(Dataset, ABC):
     def __init__(self):

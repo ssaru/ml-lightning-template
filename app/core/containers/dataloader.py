@@ -6,6 +6,9 @@ from ...core.patterns.registry import DataLoaderRegistry
 
 class DataLoader(containers.DeclarativeContainer):
     config = providers.Configuration()
+
+    DataLoaderRegistry.register(BaseDataset)
+
     instance = DataLoaderRegistry.get(config.name)
     dataloader = providers.Singleton(
         instance,
