@@ -1,10 +1,16 @@
-from abc import ABC, abstractmethod
+from abc import ABC
+from typing import Any
 
-from ..models.containers.base import BaseModelContainer
+from pytorch_lightning import Trainer
+
+from app.core.interfaces.models.containers.base import BaseModelContainer
 
 
-class Trainer(ABC):
+class BaseTrainer(ABC, Trainer):
+    def __init__(self, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
 
-    @abstractmethod
-    def fit(model: BaseModelContainer):
-        pass
+
+if __name__ == "__main__":
+    trainer = BaseTrainer()
+    print(dir(trainer))

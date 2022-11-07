@@ -1,16 +1,21 @@
 from dependency_injector import containers, providers
 
-from ...core.interfaces.data.datasets import BaseDataset
-from ...core.patterns.registry import DataLoaderRegistry
+from app.core.patterns.registry import DataLoaderRegistry, DatasetRegistry
 
 
 class DataLoader(containers.DeclarativeContainer):
     config = providers.Configuration()
 
-    DataLoaderRegistry.register(BaseDataset)
+    dataset_instance = DatasetRegistry.get(config.dataset.name)
+    dataloder_instance = DataLoaderRegistry.get(config.dataloder.name)
 
-    instance = DataLoaderRegistry.get(config.name)
+    dataset = providers.Singleton(
+        dataset_instance,
+        config.dataset.params
+    )
+
+    config.dataloader.params.update({"dataset": dataset})
     dataloader = providers.Singleton(
-        instance,
-        config.params,
+        dataloder_instance,
+        config.dataloader.params,
     )

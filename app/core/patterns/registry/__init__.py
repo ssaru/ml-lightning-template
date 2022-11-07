@@ -3,7 +3,8 @@ from torch import optim
 from torch.optim import lr_scheduler
 from torchvision import datasets as vision_datasets
 
-from .registry import Registry
+from app.core.interfaces.trainer import LightningTrainer
+from app.core.patterns.registry import Registry
 
 DatasetRegistry = Registry("DATASET")
 DataLoaderRegistry = Registry("DATALOADER")
@@ -48,6 +49,10 @@ def register_default_datasets():
 
 def register_default_modelcheckpoint():
     ModelCheckpointRegistry.register(ModelCheckpoint)
+
+
+def register_default_trainer():
+    TrainerRegistry.register(LightningTrainer)
 
 
 register_default_optimizer()

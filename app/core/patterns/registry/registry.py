@@ -64,9 +64,9 @@ class Registry(Iterable[Tuple[str, Any]]):
     def get(self, name: str) -> Any:
         ret = self._obj_map.get(name)
         if ret is None:
-            raise KeyError(
-                "No object named '{}' found in '{}' registry!".format(
-                    name, self._name))
+            ImportWarning(
+                f"No object named '{name}' found in '{self._name}' registry!")
+            return None
         return ret
 
     def __contains__(self, name: str) -> bool:
