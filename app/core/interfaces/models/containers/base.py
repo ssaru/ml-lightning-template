@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Tuple
+from typing import Any, Tuple
 
 import torch
 import torch.nn as nn
-from pytorch_lightning import LightningModule
 
 
-class BaseModelContainer(LightningModule, ABC):
+class BaseModelContainer(ABC):
     """Abstract Class for Model Container"""
 
     def __init__(self, model: nn.Module):
@@ -17,9 +16,16 @@ class BaseModelContainer(LightningModule, ABC):
         super().__init__()
         self.model = model
 
-    @abstractmethod
-    def forward(self, x: torch.Tensor):
-        raise NotImplementedError()
+    def forward(self, *args: Any, **kwargs: Any) -> Any:
+        r"""
+        Same as :meth:`torch.nn.Module.forward`.
+        Args:
+            *args: Whatever you decide to pass into the forward method.
+            **kwargs: Keyword arguments are also possible.
+        Return:
+            Your model's output
+        """
+        raise self.model.forward(*args, **kwargs)
 
     @abstractmethod
     def configure_optimizers(self):

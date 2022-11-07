@@ -15,6 +15,8 @@ ModelCheckpointRegistry = Registry("MODEL_CHECKPOINT")
 OptimizerRegistry = Registry("OPTIMIZER")
 SchedulerRegistry = Registry("SCHEDULER")
 
+TrainerRegistry = Registry("TRAINER")
+
 
 def register_default_optimizer():
     for k, v in optim.__dict__.items():

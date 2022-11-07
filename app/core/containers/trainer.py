@@ -1,17 +1,9 @@
-import logging.config
-
 from dependency_injector import containers, providers
 
-from ...config import AppConfig
-from .dataloader import DataLoader
-from .dataset import Dataset
-from .model import Model
-from .model_container import ModelContainer
-from .optimizer import Optimizer
-from .scheduler import Scheduler
+from ...core.patterns.registry import TrainerRegistry
 
 
-class TrainApplication(containers.DeclarativeContainer):
+class Trainer(containers.DeclarativeContainer):
     config = providers.Configuration()
     config.from_pydantic(AppConfig)
 
@@ -43,6 +35,40 @@ class TrainApplication(containers.DeclarativeContainer):
     model_container = providers.Container(
         ModelContainer,
         config=config.model_container
+    )
+
+    core = providers.Container(
+        Core,
+        config=config.core,
+    )
+
+    gateways = providers.Container(
+        Gateways,
+        config=config.gateways,
+    )
+
+    services = providers.Container(
+        Services,
+        config=config.services,
+        gateways=gateways,
+    )
+
+    logging = providers.Resource(
+        logging.config.dictConfig,
+        config=config.logging,
+    )
+
+
+class Datasets(containers.DeclarativeContainer):
+    config = providers.Configuration()
+    # TODO. Dataset Config 추가
+    config.from_pydantic(AppConfig.dataset)
+
+    instance = DatasetRegistry.get(config.name)
+
+    dataset = providers.Singleton(
+        instance,
+        config.params,
     )
 
 
