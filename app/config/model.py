@@ -5,8 +5,8 @@ from typing import Dict, List
 from omegaconf import OmegaConf
 from pydantic import BaseModel
 
-from ..core.patterns import Singleton
-from .utils import load_config
+from app.config.utils import load_config
+from app.core.patterns import Singleton
 
 
 class BaseConfig(BaseModel):

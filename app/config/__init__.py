@@ -1,3 +1,3 @@
-from .model import AppConfig as _AppConfig
+from app.config.model import AppConfig as _AppConfig
 
 AppConfig = _AppConfig()

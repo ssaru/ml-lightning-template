@@ -3,10 +3,8 @@ from abc import ABC, abstractmethod
 
 from torch.utils.data import Dataset
 
-from ....patterns.registry import DatasetRegistry
 
-
-class BaseDataset(Dataset, ABC):
+class BaseDataset(ABC, Dataset):
     def __init__(self):
         pass
 
