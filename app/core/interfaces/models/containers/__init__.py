@@ -1,3 +1,3 @@
-from app.core.interfaces.models.containers import BaseModelContainer
+from app.core.interfaces.models.containers.base import BaseModelContainer
 
 __all__ = ["BaseModelContainer"]

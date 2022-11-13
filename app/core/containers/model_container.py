@@ -23,7 +23,7 @@ class ModelContainer(containers.DeclarativeContainer):
         config.train.optimizer.scheduler.name)
 
     container_instance = ModelContainerRegistry.get(
-        config.model.container.name)
+        config.model_container.name)
 
     model: Type["BaseModel"] = providers.Singleton(
         model_instance,
@@ -35,7 +35,7 @@ class ModelContainer(containers.DeclarativeContainer):
         optimizer_instance,
         config.train.optimizer.params,
     )
-    config.model.container.params.update({"optimizer": optimizer})
+    config.model_container.params.update({"optimizer": optimizer})
 
     if scheduler_instance:
         config.train.optimizer.scheduler.params.update(
@@ -44,10 +44,10 @@ class ModelContainer(containers.DeclarativeContainer):
             scheduler_instance,
             config.train.optimizer.scheduler.params,
         )
-        config.model.container.params.update({"scheduler": scheduler})
+        config.model_container.params.update({"scheduler": scheduler})
 
-    config.model.container.params.update({"model": model})
+    config.model_container.params.update({"model": model})
     container = providers.Singleton(
         container_instance,
-        config.model.container.params,
+        config.model_container.params,
     )

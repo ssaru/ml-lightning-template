@@ -1,0 +1,49 @@
+common: null
+
+data:
+    train:
+        dataset:
+            name: null
+            params: null
+        dataloader:
+            name: null
+            params: null
+    valid:
+        dataset:
+            name: null
+            params: null
+        dataloader:
+            name: null
+            params: null
+    test:
+        dataset:
+            name: null
+            params: null
+        dataloader:
+            name: null
+            params: null
+
+model:
+    name: null
+    params: null
+
+model_container:
+    name: null
+    params: null
+
+train:
+    optimizer:
+        name: null
+        params: null
+
+        scheduler:
+            name: null
+            params: null
+
+trainer:
+    name: null
+    params: null
+
+    model_checkpoint:
+        name: null
+        params: null
