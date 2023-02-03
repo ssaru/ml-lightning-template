@@ -1,6 +1,13 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,macos,jetbrains
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,macos,jetbrains
 
+## etc ##
+refresh.sh
+
+## Models ##
+.data/
+lightning_logs/
+
 ## Poetry ##
 poetry.lock
 

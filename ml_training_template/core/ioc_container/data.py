@@ -4,6 +4,7 @@ from typing import Dict
 from ml_training_template.core.patterns.registry import (
     DataLoaderRegistry,
     DatasetRegistry,
+    TransformRegistry,
 )
 
 
@@ -19,6 +20,15 @@ class DataIoCContainer(ABC):
                                               dataset=dataset)
 
     def get_dataset(self, name, params):
+        transform_dict = params.pop("transform")
+        transform_name = transform_dict.get("name")
+        transform_params = transform_dict.get("params", {})
+        print(f"transforms_name: {transform_name}")
+        print(f"transforms_params: {transform_params}")
+        transform_cls = TransformRegistry.get(transform_name)
+        transforms = transform_cls(**transform_params)
+        params.update({"transform": transforms})
+
         dataset_cls = DatasetRegistry.get(name)
         dataset = dataset_cls(**params)
         return dataset

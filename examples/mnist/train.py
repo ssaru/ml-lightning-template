@@ -1,3 +1,6 @@
+from models.containers.mnist import MNISTModelContainer
+from models.models.mnist import MnistModel
+
 from ml_training_template.application import TrainApplication, main
 from ml_training_template.core.containers import TrainExecutor
 
@@ -6,8 +9,9 @@ if __name__ == "__main__":
     # app.run()
 
     app = TrainExecutor()
-    app.core.init_resources()
-    app.wire(modules=[__name__])
+    # app.core.init_resources()
+    app.wire(packages=["ml_training_template"])
+
     # train_dataloader = app.train_dataloader().dataloader
     # valid_dataloader = app.valid_dataloader().dataloader
     # test_dataloader = app.test_dataloader().dataloader
@@ -27,6 +31,5 @@ if __name__ == "__main__":
     # print("====================================\n\n")
     # print(f"train dataloader: {trainer}")
     # print(f"{dir(trainer)}")
-    main()
 
     main()

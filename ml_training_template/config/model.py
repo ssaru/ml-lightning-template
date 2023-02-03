@@ -61,20 +61,22 @@ class Model(BaseConfig):
     params: Optional[Dict] = {}
 
 
-class ModelContainer(BaseConfig):
-    name: str
-    params: Optional[Dict] = {}
-    model: Model
-
-
 class Scheduler(BaseConfig):
-    name: str
+    name: Union[str, None] = None
     params: Optional[Dict] = {}
 
 
 class Optimizer(BaseConfig):
     name: str = "SGD"
     params: Optional[Dict] = {"lr": 1e-2, "momentum": 0.9}
+
+
+class ModelContainer(BaseConfig):
+    name: str
+    params: Optional[Dict] = {}
+    model: Model
+    optimizer: Optimizer = Optimizer()
+    scheduler: Optional[Scheduler] = Scheduler()
 
 
 class ModelCheckpoint(BaseConfig):
@@ -90,8 +92,6 @@ class Trainer(BaseConfig):
 class Model(BaseConfig):
     data: Data
     container: ModelContainer
-    optimizer: Optimizer = Optimizer()
-    scheduler: Optional[Scheduler] = None
     trainer: Trainer
     model_checkpoint: Optional[ModelCheckpoint] = ModelCheckpoint()
 

@@ -15,11 +15,7 @@ from ml_training_template.core.interfaces.trainer import BaseTrainer
 class TrainApplication:
     def __init__(self):
         app = TrainExecutor()
-
-        print("TRAIN")
-        print(f"config: {app.config()}")
-        app.core.init_resources()
-        app.wire(modules=[__name__])
+        app.wire(modules=["ml_training_template"])
 
     @inject
     def run(self,
@@ -29,21 +25,6 @@ class TrainApplication:
             model_container: Type["BaseModelContainer"] = Provide[TrainExecutor.model_container],
             trainer: Type["BaseTrainer"] = Provide[TrainExecutor.trainer]
             ) -> None:
-        print(f"dataloader: {train_dataloader}")
-        print(f"{dir(train_dataloader)}")
-        print("====================================\n\n")
-        print(f"valid_dataloader: {valid_dataloader}")
-        print(f"{dir(valid_dataloader)}")
-        print("====================================\n\n")
-        print(f"test_dataloader: {test_dataloader}")
-        print(f"{dir(test_dataloader)}")
-        print("====================================\n\n")
-        print(f"model_container: {model_container}")
-        print(f"{dir(model_container)}")
-        print("====================================\n\n")
-        print(f"trainer: {trainer}")
-        print(f"{dir(trainer)}")
-        print("====================================\n\n")
 
         trainer.fit(model=model_container,
                     train_dataloaders=train_dataloader,
@@ -53,32 +34,17 @@ class TrainApplication:
 
 
 @inject
-def main(train_dataloader: Type["BaseDataLoader"] = Provide[TrainExecutor.train_dataloader],
-         valid_dataloader: Type["BaseDataLoader"] = Provide[TrainExecutor.valid_dataloader],
-         test_dataloader: Type["BaseDataLoader"] = Provide[TrainExecutor.test_dataloader],
-         model_container: Type["BaseModelContainer"] = Provide[TrainExecutor.model_container],
-         trainer: Type["BaseTrainer"] = Provide[TrainExecutor.trainer]
+def main(train_dataloader: Type["BaseDataLoader"] = Provide[TrainExecutor.train_dataloader.dataloader],
+         valid_dataloader: Type["BaseDataLoader"] = Provide[TrainExecutor.valid_dataloader.dataloader],
+         test_dataloader: Type["BaseDataLoader"] = Provide[TrainExecutor.test_dataloader.dataloader],
+         model_container: Type["BaseModelContainer"] = Provide[TrainExecutor.model_container.model_container],
+         trainer: Type["BaseTrainer"] = Provide[TrainExecutor.trainer.trainer]
          ) -> None:
-    print(f"dataloader: {train_dataloader}")
-    print(f"{dir(train_dataloader)}")
-    print("====================================\n\n")
-    print(f"valid_dataloader: {valid_dataloader}")
-    print(f"{dir(valid_dataloader)}")
-    print("====================================\n\n")
-    print(f"test_dataloader: {test_dataloader}")
-    print(f"{dir(test_dataloader)}")
-    print("====================================\n\n")
-    print(f"model_container: {model_container}")
-    print(f"{dir(model_container)}")
-    print("====================================\n\n")
-    print(f"trainer: {trainer}")
-    print(f"{dir(trainer)}")
-    print("====================================\n\n")
-    trainer.fit(model=model_container,
-                train_dataloaders=train_dataloader,
-                val_dataloaders=valid_dataloader)
-    trainer.test(model=model_container,
-                 dataloaders=test_dataloader)
+    trainer.trainer.fit(model=model_container.container,
+                        train_dataloaders=train_dataloader.dataloader,
+                        val_dataloaders=valid_dataloader.dataloader)
+    trainer.trainer.test(model=model_container.container,
+                         dataloaders=test_dataloader.dataloader)
 
 
 if __name__ == "__main__":

@@ -4,7 +4,14 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from torch import optim
 from torch.optim import lr_scheduler
 from torchvision import datasets as vision_datasets
+from torchvision import transforms
 
+from ml_training_template.core.interfaces.data.dataloaders import (
+    BaseDataLoader,
+)
+from ml_training_template.core.interfaces.models.containers.base import (
+    BaseModelContainer,
+)
 from ml_training_template.core.interfaces.trainer import BaseTrainer
 
 
@@ -90,6 +97,8 @@ class Registry(Iterable[Tuple[str, Any]]):
     __str__ = __repr__
 
 
+TransformRegistry = Registry("TRANSFORM")
+
 DatasetRegistry = Registry("DATASET")
 DataLoaderRegistry = Registry("DATALOADER")
 
@@ -139,10 +148,34 @@ def register_default_trainer():
     TrainerRegistry.register(BaseTrainer)
 
 
+def register_default_dataloader():
+    DataLoaderRegistry.register(BaseDataLoader)
+
+
+def register_default_model_container():
+    ModelContainerRegistry.register(BaseModelContainer)
+
+
+def register_default_transform():
+    for k, v in transforms.__dict__.items():
+        if not(
+            k.startswith("__") or k.startswith("_") or k.islower()
+            or
+            k
+            in (
+                "Compose", "autoaugment", "functional", "functional_pil",
+                "functional_tensor", "transforms")):
+            TransformRegistry.register(v)
+
+
 register_default_optimizer()
 register_default_scheduler()
 register_default_datasets()
 register_default_modelcheckpoint()
+register_default_dataloader()
+register_default_trainer()
+register_default_transform()
+
 
 __all__ = ["DatasetRegistry", "DataLoaderRegistry", "ModelRegistry",
            "ModelContainerRegistry", "ModelCheckpointRegistry",

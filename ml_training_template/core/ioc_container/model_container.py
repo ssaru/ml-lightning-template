@@ -30,7 +30,7 @@ class ModelIoCContainer(ABC):
         optimizer: Type["BaseOptimizer"] = self.get_optimizer(
             model=model, name=optimizer_name, params=optimizer_params)
         scheduler: Optional[Type["BaseScheduler"]] = self.get_scheduler(
-            name=scheduler_name, params=scheduler_params)
+            name=scheduler_name, params=scheduler_params, optimizer=optimizer)
         self.container: Type["BaseModelContainer"] = self.get_model_container(
             name=container_name, params=container_params, model=model,
             optimizer=optimizer, scheduler=scheduler)
@@ -42,14 +42,16 @@ class ModelIoCContainer(ABC):
 
     def get_optimizer(self, model: Type[BaseModel], name: str, params: Dict):
         optimizer_cls = OptimizerRegistry.get(name)
-        optimizer = optimizer_cls(model.parameters(), **params)
+        params.update({"params": model.parameters()})
+        optimizer = optimizer_cls(**params)
         return optimizer
 
-    def get_scheduler(self, name: str, params: Dict):
+    def get_scheduler(self, name: str, params: Dict,
+                      optimizer: Type["BaseOptimizer"]):
         if name is None:
             return None
         scheduler_cls = SchedulerRegistry.get(name)
-        scheduler = scheduler_cls(**params)
+        scheduler = scheduler_cls(optimizer=optimizer, **params)
         return scheduler
 
     def get_model_container(self,

@@ -6,7 +6,7 @@ from ml_training_template.core.interfaces.models import BaseModel
 from ml_training_template.core.patterns.registry import ModelRegistry
 
 
-@ModelRegistry.register("MNIST")
+@ModelRegistry.register()
 class MnistModel(BaseModel):
     def __init__(self, num_classes=10):
         super(MnistModel, self).__init__()

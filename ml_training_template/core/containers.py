@@ -20,8 +20,8 @@ class Model(containers.DeclarativeContainer):
         optimizer_params=config.optimizer.params,
         scheduler_name=config.scheduler.name,
         scheduler_params=config.scheduler.params,
-        container_name=config.container.name,
-        container_params=config.container.params
+        container_name=config.name,
+        container_params=config.params
 
     )
 

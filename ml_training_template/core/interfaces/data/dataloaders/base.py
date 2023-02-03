@@ -2,8 +2,6 @@ from typing import Any, Optional, Type, TypeVar
 
 from torch.utils.data import DataLoader, Dataset
 
-from ml_training_template.core.patterns.registry import DatasetRegistry
-
 T_co = TypeVar('T_co', covariant=True)
 T = TypeVar('T')
 
