@@ -90,6 +90,23 @@ model_checkpoint:
 **[User Code]**
 
 ```python
+from typing import Any, Optional, Tuple, Type
+
+import torch
+import torch.nn.functional as F
+from torch import nn
+from torchmetrics.functional import accuracy
+
+from ml_training_template.core.interfaces import (
+    BaseModel,
+    BaseModelContainer,
+    BaseOptimizer,
+    BaseScheduler,
+)
+from ml_training_template.core.patterns.registry import ModelRegistry
+from ml_training_template.core.patterns.registry import ModelContainerRegistry
+from ml_training_template.application import TrainApplication
+
 # Models
 @ModelRegistry.register()
 class MnistModel(BaseModel):
@@ -122,8 +139,6 @@ class MnistModel(BaseModel):
 # Model Container
 @ModelContainerRegistry.register()
 class MNISTModelContainer(BaseModelContainer):
-    """Abstract Class for Model Container"""
-
     def __init__(self,
                  model: Type["BaseModel"],
                  optimizer: Type["BaseOptimizer"],
@@ -181,11 +196,25 @@ class MNISTModelContainer(BaseModelContainer):
         _, loss = self.shared_step(x=x, y=y)
         return {"test/loss": loss, "loss": loss}
 
-from ml_training_template.application import TrainApplication
-
 if __name__ == "__main__":
     train_app = TrainApplication()
     train_app.run()
+>>>
+GPU available: False, used: False
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+
+  | Name  | Type       | Params
+-------------------------------------
+0 | model | MnistModel | 21.8 K
+-------------------------------------
+21.8 K    Trainable params
+0         Non-trainable params
+21.8 K    Total params
+0.087     Total estimated model params size (MB)
+Epoch 0:  12%|██████                                             | 33/275 [00:01<00:10, 22.75it/s, loss=2.31, v_num=9]
+...
 ```
 
 ## Expected difficulties
