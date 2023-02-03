@@ -6,13 +6,11 @@ from torch.optim import lr_scheduler
 from torchvision import datasets as vision_datasets
 from torchvision import transforms
 
-from ml_training_template.core.interfaces.data.dataloaders import (
+from ml_training_template.core.interfaces import (
     BaseDataLoader,
-)
-from ml_training_template.core.interfaces.models.containers.base import (
     BaseModelContainer,
+    BaseTrainer,
 )
-from ml_training_template.core.interfaces.trainer import BaseTrainer
 
 
 class Registry(Iterable[Tuple[str, Any]]):

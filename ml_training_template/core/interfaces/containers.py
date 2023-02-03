@@ -1,21 +1,20 @@
 from abc import ABC
-from typing import Any, Dict, Optional, Tuple, Type
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Type
 
 import torch
 from pytorch_lightning import LightningModule
 
-from ml_training_template.core.interfaces.models import BaseModel
-from ml_training_template.core.interfaces.optimizer import BaseOptimizer
-from ml_training_template.core.interfaces.scheduler import BaseScheduler
+if TYPE_CHECKING:
+    from . import BaseModel, BaseOptimizer, BaseScheduler
 
 
 class BaseModelContainer(ABC, LightningModule):
     """Abstract Class for Model Container"""
 
     def __init__(self,
-                 model: Type[BaseModel],
-                 optimizer: Type[BaseOptimizer],
-                 scheduler: Optional[BaseScheduler],
+                 model: Type["BaseModel"],
+                 optimizer: Type["BaseOptimizer"],
+                 scheduler: Optional["BaseScheduler"],
                  *args: Any, **kwargs: Any):
         """
         Args:
@@ -46,9 +45,9 @@ class BaseModelContainer(ABC, LightningModule):
     def shared_step(self, x: torch.Tensor, y: torch.Tensor):
         raise NotImplementedError()
 
-    def training_step(
-            self, batch: Tuple[torch.Tensor, torch.Tensor],
-            batch_idx: int):
+    def training_step(self,
+                      batch: Tuple[torch.Tensor, torch.Tensor],
+                      batch_idx: int):
         raise NotImplementedError()
 
     def training_epoch_end(self, training_step_outputs):
@@ -58,4 +57,7 @@ class BaseModelContainer(ABC, LightningModule):
         raise NotImplementedError()
 
     def validation_epoch_end(self, validation_step_outputs):
+        raise NotImplementedError()
+
+    def test_step(self, batch, batch_idx):
         raise NotImplementedError()

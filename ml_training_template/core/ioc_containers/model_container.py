@@ -1,12 +1,11 @@
-from abc import ABC
 from typing import Dict, Optional, Type
 
-from ml_training_template.core.interfaces.models import BaseModel
-from ml_training_template.core.interfaces.models.containers import (
+from ml_training_template.core.interfaces import (
+    BaseModel,
     BaseModelContainer,
+    BaseOptimizer,
+    BaseScheduler,
 )
-from ml_training_template.core.interfaces.optimizer import BaseOptimizer
-from ml_training_template.core.interfaces.scheduler import BaseScheduler
 from ml_training_template.core.patterns.registry import (
     ModelContainerRegistry,
     ModelRegistry,
@@ -14,8 +13,10 @@ from ml_training_template.core.patterns.registry import (
     SchedulerRegistry,
 )
 
+from .base import BaseIoCContainer
 
-class ModelIoCContainer(ABC):
+
+class ModelIoCContainer(BaseIoCContainer):
     def __init__(self,
                  model_name: str,
                  model_params: Dict,
@@ -34,6 +35,9 @@ class ModelIoCContainer(ABC):
         self.container: Type["BaseModelContainer"] = self.get_model_container(
             name=container_name, params=container_params, model=model,
             optimizer=optimizer, scheduler=scheduler)
+
+    def get(self):
+        return self.container
 
     def get_model(self, name: str, params: Dict):
         model_cls = ModelRegistry.get(name)

@@ -1,8 +1,8 @@
-from models.containers.mnist import MNISTModelContainer
-from models.models.mnist import MnistModel
+from container import MNISTModelContainer
+from model import MnistModel
 
 from ml_training_template.application import TrainApplication, main
-from ml_training_template.core.containers import TrainExecutor
+from ml_training_template.core.di_containers import TrainExecutor
 
 if __name__ == "__main__":
     # app = TrainApplication()

@@ -78,7 +78,7 @@ modeling:
         params:
             num_sanity_val_steps: 2
             enable_checkpointing: true
-            max_epochs: 100
+            max_epochs: 30
 
     model_checkpoint:
         name: ModelCheckpoint

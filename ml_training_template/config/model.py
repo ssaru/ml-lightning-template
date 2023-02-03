@@ -6,15 +6,12 @@ from omegaconf import OmegaConf
 from pydantic import BaseSettings
 
 from ml_training_template.config.utils import load_config
-from ml_training_template.core.patterns import Singleton
 
 
 class BaseConfig(BaseSettings):
     @classmethod
     def of(cls, params: Dict):
         return cls.parse_obj(OmegaConf.to_container(OmegaConf.create(params)))
-
-# Common Configurations
 
 
 class Logger(BaseConfig):
@@ -29,7 +26,6 @@ class Dataset(BaseConfig):
     params: Dict
 
 
-# Modeling Configurations
 class DataLoader(BaseConfig):
     name: str = "BaseDataLoader"
     # NOTE. DataLoader의 params는 일반화하기 어려워 Dict로 정의
@@ -96,8 +92,7 @@ class Model(BaseConfig):
     model_checkpoint: Optional[ModelCheckpoint] = ModelCheckpoint()
 
 
-# Application Configurations
-class AppConfig(Singleton):
+class AppConfig:
     PROJECT_NAME: str
     LOGGER: Logger
 

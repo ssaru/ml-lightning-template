@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from ml_training_template.core.interfaces.models import BaseModel
+from ml_training_template.core.interfaces import BaseModel
 from ml_training_template.core.patterns.registry import ModelRegistry
 
 

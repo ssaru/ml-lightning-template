@@ -1,13 +1,15 @@
 from typing import Any, Optional, Tuple, Type
 
 import torch
+import torch.nn.functional as F
+from torchmetrics.functional import accuracy
 
-from ml_training_template.core.interfaces.models import BaseModel
-from ml_training_template.core.interfaces.models.containers import (
+from ml_training_template.core.interfaces import (
+    BaseModel,
     BaseModelContainer,
+    BaseOptimizer,
+    BaseScheduler,
 )
-from ml_training_template.core.interfaces.optimizer import BaseOptimizer
-from ml_training_template.core.interfaces.scheduler import BaseScheduler
 from ml_training_template.core.patterns.registry import ModelContainerRegistry
 
 
@@ -16,9 +18,9 @@ class MNISTModelContainer(BaseModelContainer):
     """Abstract Class for Model Container"""
 
     def __init__(self,
-                 model: Type[BaseModel],
-                 optimizer: Type[BaseOptimizer],
-                 scheduler: Optional[BaseScheduler],
+                 model: Type["BaseModel"],
+                 optimizer: Type["BaseOptimizer"],
+                 scheduler: Optional["BaseScheduler"],
                  *args: Any, **kwargs: Any):
         """
         Args:
@@ -57,3 +59,17 @@ class MNISTModelContainer(BaseModelContainer):
 
     def validation_epoch_end(self, validation_step_outputs):
         pass
+
+    def _shared_eval_step(self, batch, batch_idx):
+        x, y = batch
+        y_hat = self.model(x)
+        loss = F.cross_entropy(y_hat, y)
+        acc = accuracy(y_hat, y)
+        return loss, acc
+
+    def test_step(
+            self, batch: Tuple[torch.Tensor, torch.Tensor],
+            batch_idx: int):
+        x, y = batch
+        _, loss = self.shared_step(x=x, y=y)
+        return {"test/loss": loss, "loss": loss}

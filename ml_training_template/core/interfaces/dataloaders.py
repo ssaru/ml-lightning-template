@@ -1,9 +1,6 @@
-from typing import Any, Optional, Type, TypeVar
+from typing import Any, Optional, Type
 
 from torch.utils.data import DataLoader, Dataset
-
-T_co = TypeVar('T_co', covariant=True)
-T = TypeVar('T')
 
 
 class BaseDataLoader(DataLoader):

@@ -1,4 +1,3 @@
-from abc import ABC
 from typing import Dict
 
 from ml_training_template.core.patterns.registry import (
@@ -7,8 +6,10 @@ from ml_training_template.core.patterns.registry import (
     TransformRegistry,
 )
 
+from .base import BaseIoCContainer
 
-class DataIoCContainer(ABC):
+
+class DataIoCContainer(BaseIoCContainer):
     def __init__(self,
                  dataset_name: str,
                  dataset_params: Dict,
@@ -19,19 +20,24 @@ class DataIoCContainer(ABC):
                                               params=dataloader_params,
                                               dataset=dataset)
 
+    def get(self):
+        return self.dataloader
+
     def get_dataset(self, name, params):
-        transform_dict = params.pop("transform")
-        transform_name = transform_dict.get("name")
-        transform_params = transform_dict.get("params", {})
-        print(f"transforms_name: {transform_name}")
-        print(f"transforms_params: {transform_params}")
-        transform_cls = TransformRegistry.get(transform_name)
-        transforms = transform_cls(**transform_params)
-        params.update({"transform": transforms})
+        transform = self._instanciate_transform(
+            transform_params=params.pop("transform"))
+        params.update({"transform": transform})
 
         dataset_cls = DatasetRegistry.get(name)
         dataset = dataset_cls(**params)
         return dataset
+
+    def _instanciate_transform(self, transform_params: Dict):
+        transform_name = transform_params.get("name")
+        transform_params = transform_params.get("params", {})
+        transform_cls = TransformRegistry.get(transform_name)
+        transform = transform_cls(**transform_params)
+        return transform
 
     def get_dataloader(self, name, params, dataset):
         dataloader_cls = DataLoaderRegistry.get(name)

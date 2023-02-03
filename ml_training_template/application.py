@@ -2,14 +2,12 @@ from typing import Type
 
 from dependency_injector.wiring import Provide, inject
 
-from ml_training_template.core.containers import TrainExecutor
-from ml_training_template.core.interfaces.data.dataloaders import (
+from ml_training_template.core.di_containers.containers import TrainExecutor
+from ml_training_template.core.interfaces import (
     BaseDataLoader,
-)
-from ml_training_template.core.interfaces.models.containers import (
     BaseModelContainer,
+    BaseTrainer,
 )
-from ml_training_template.core.interfaces.trainer import BaseTrainer
 
 
 class TrainApplication:

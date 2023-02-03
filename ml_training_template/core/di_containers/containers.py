@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 
 from ml_training_template.config import AppConfig
-from ml_training_template.core.ioc_container import (
+from ml_training_template.core.ioc_containers import (
     DataIoCContainer,
     ModelCheckPointIoCContainer,
     ModelIoCContainer,
