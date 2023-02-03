@@ -1,35 +1,8 @@
 from container import MNISTModelContainer
 from model import MnistModel
 
-from ml_training_template.application import TrainApplication, main
-from ml_training_template.core.di_containers import TrainExecutor
+from ml_training_template.application import TrainApplication
 
 if __name__ == "__main__":
-    # app = TrainApplication()
-    # app.run()
-
-    app = TrainExecutor()
-    # app.core.init_resources()
-    app.wire(packages=["ml_training_template"])
-
-    # train_dataloader = app.train_dataloader().dataloader
-    # valid_dataloader = app.valid_dataloader().dataloader
-    # test_dataloader = app.test_dataloader().dataloader
-    # model_container = app.model_container().model_container
-    # trainer = app.trainer().trainer
-    # print(f"train dataloader: {train_dataloader}")
-    # print(f"{dir(train_dataloader)}")
-    # print("====================================\n\n")
-    # print(f"train dataloader: {valid_dataloader}")
-    # print(f"{dir(valid_dataloader)}")
-    # print("====================================\n\n")
-    # print(f"train dataloader: {test_dataloader}")
-    # print(f"{dir(test_dataloader)}")
-    # print("====================================\n\n")
-    # print(f"train dataloader: {model_container}")
-    # print(f"{dir(model_container)}")
-    # print("====================================\n\n")
-    # print(f"train dataloader: {trainer}")
-    # print(f"{dir(trainer)}")
-
-    main()
+    train_app = TrainApplication()
+    train_app.run()

@@ -12,7 +12,7 @@ from ml_training_template.core.ioc_containers import (
 class Model(containers.DeclarativeContainer):
     config = providers.Configuration()
 
-    model_container = providers.Singleton(
+    container = providers.Singleton(
         ModelIoCContainer,
         model_name=config.model.name,
         model_params=config.model.params,
@@ -22,14 +22,13 @@ class Model(containers.DeclarativeContainer):
         scheduler_params=config.scheduler.params,
         container_name=config.name,
         container_params=config.params
-
     )
 
 
 class Trainer(containers.DeclarativeContainer):
     config = providers.Configuration()
 
-    trainer = providers.Singleton(
+    executor = providers.Singleton(
         TrainerIoCContainer,
         trainer_name=config.name,
         trainer_params=config.params
@@ -39,7 +38,7 @@ class Trainer(containers.DeclarativeContainer):
 class Data(containers.DeclarativeContainer):
     config = providers.Configuration()
 
-    dataloader = providers.Singleton(
+    loader = providers.Singleton(
         DataIoCContainer,
         dataset_name=config.dataset.name,
         dataset_params=config.dataset.params,
@@ -58,31 +57,31 @@ class ModelCheckpoint(containers.DeclarativeContainer):
     )
 
 
-class TrainExecutor(containers.DeclarativeContainer):
+class Training(containers.DeclarativeContainer):
     config = providers.Configuration()
     config.from_pydantic(AppConfig.MODEL)
 
-    train_dataloader = providers.Container(
+    train_data = providers.Container(
         Data,
         config=config.data.train
     )
 
-    valid_dataloader = providers.Container(
+    valid_data = providers.Container(
         Data,
         config=config.data.valid
     )
 
-    test_dataloader = providers.Container(
+    test_data = providers.Container(
         Data,
         config=config.data.test
     )
 
-    model_container = providers.Container(
+    model = providers.Container(
         Model,
         config=config.container
     )
 
-    trainer = providers.Container(
+    train = providers.Container(
         Trainer,
         config=config.trainer
     )

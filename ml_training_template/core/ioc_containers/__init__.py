@@ -1,7 +1,7 @@
 from .data import DataIoCContainer
 from .model_checkpoint import ModelCheckPointIoCContainer
 from .model_container import ModelIoCContainer
-from .tainer import TrainerIoCContainer
+from .trainer import TrainerIoCContainer
 
-__all__ = ["ModelIoCContainer", "TrainerIoCContainer",
-           "DataIoCContainer", "ModelCheckPointIoCContainer"]
+__all__ = ["DataIoCContainer", "ModelCheckPointIoCContainer",
+           "ModelIoCContainer", "TrainerIoCContainer"]
