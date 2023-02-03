@@ -1,0 +1,87 @@
+# TODO. app / log는 추후 정리
+app:
+    project_name: 'mnist'
+log:
+    main_log:
+        level: INFO # log level 정보는 logging.getLevelName() 참고
+        max_len: 5000
+        handler:
+            - stdout
+
+modeling:
+    data:
+        train:
+            dataset:
+                name: MNIST
+                params:
+                    root: ./.data
+                    train: true
+                    download: true
+                    transform:
+                        name: ToTensor
+            dataloader:
+                name: BaseDataLoader
+                params:
+                    batch_size: 256
+                    shuffle: true
+        valid:
+            dataset:
+                name: MNIST
+                params:
+                    root: ./.data
+                    train: false
+                    download: true
+                    transform:
+                        name: ToTensor
+            dataloader:
+                name: BaseDataLoader
+                params:
+                    batch_size: 256
+                    shuffle: false
+        test:
+            dataset:
+                name: MNIST
+                params:
+                    root: .data
+                    train: false
+                    download: true
+                    transform:
+                        name: ToTensor
+            dataloader:
+                name: BaseDataLoader
+                params:
+                    batch_size: 256
+                    shuffle: false
+
+    container:
+        name: MNISTModelContainer
+
+        model:
+            name: MnistModel
+            params:
+                num_classes: 10
+
+        optimizer:
+            name: SGD
+            params:
+                lr: 0.001
+                momentum: 0.9
+
+        scheduler:
+            name: StepLR
+            params:
+                step_size: 30
+                gamma: 0.1
+
+    trainer:
+        name: BaseTrainer
+        params:
+            num_sanity_val_steps: 2
+            enable_checkpointing: true
+            max_epochs: 30
+
+    model_checkpoint:
+        name: ModelCheckpoint
+        params:
+            dirpath: ./outputs
+            filename: mnist
