@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "ml-lightning-template"
-version = "0.1.0"
+name = "ml_training_template"
+version = "0.0.1.dev"
 description = ""
 authors = ["martinHwang <dhhwang89@gmail.com>"]
 
@@ -9,6 +9,11 @@ python = "^3.8"
 pydantic = "^1.10.2"
 omegaconf = "^2.2.3"
 PyYAML = "^6.0"
+torch = "^1.12.1"
+torchvision = "^0.13.1"
+torchaudio = "^0.12.1"
+pytorch-lightning = "^1.8.0"
+dependency-injector = "^4.41.0"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.20.0"
