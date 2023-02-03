@@ -1,58 +1,215 @@
 # ML Lightning Template
 
-Deep Learning 모델을 PyTorch Lightning을 활용해서 쉽게 만들 수 있는 템플릿 코드를 만든다.
+Template code to easily create deep learning models
 
 ## Objective
 
-모델 학습, 저장 등에 대한 신경은 쓰지 않고, 모델 그 자체(nn.Module)만 잘 만들면, 바로 학습하고 활용할 수 있는 수준으로 패키지화한다.
+If you create a model without worrying about training and storing the model, it is packaged to a level that can be learned and used immediately.
 
-## 예상되는 문제점
+**[Configuration]**
 
-크게 3가지 형태로 다양한 form을 갖게 된다.
+```yaml
+data:
+    train:
+        dataset:
+            name: MNIST
+            params:
+                root: ./.data
+                train: true
+                download: true
+                transform:
+                    name: ToTensor
+        dataloader:
+            name: BaseDataLoader
+            params:
+                batch_size: 256
+                shuffle: true
+    valid:
+        dataset:
+            name: MNIST
+            params:
+                root: ./.data
+                train: false
+                download: true
+                transform:
+                    name: ToTensor
+        dataloader:
+            name: BaseDataLoader
+            params:
+                batch_size: 256
+                shuffle: false
+    test:
+        dataset:
+            name: MNIST
+            params:
+                root: .data
+                train: false
+                download: true
+                transform:
+                    name: ToTensor
+        dataloader:
+            name: BaseDataLoader
+            params:
+                batch_size: 256
+                shuffle: false
 
-1. (모듈 관점) Transformer, CNN, LSTM등의 모듈 근간이 다른 경우
-2. (거시적인 태스크 관점) NLP, Vision에 따라서 추상화 계층이 다르다.
-3. (세부적인 태스크 관점) Objective Detection, Face Recognition에 따른 추상화 계층이 다른 경우
+container:
+    name: MNISTModelContainer
 
-따라서, 각 변형에 알맞는 추가적인 추상화가 필요할 수 있다.
-해당 템플릿은 추가적인 추상화 이전의 추상계층을 만드는 것을 목적으로 한다.
+    model:
+        name: MnistModel
+        params:
+            num_classes: 10
 
-## 설치
+    optimizer:
+        name: SGD
+        params:
+            lr: 0.001
+            momentum: 0.9
+
+    scheduler:
+        name: StepLR
+        params:
+            step_size: 30
+            gamma: 0.1
+
+trainer:
+    name: BaseTrainer
+    params:
+        num_sanity_val_steps: 2
+        enable_checkpointing: true
+        max_epochs: 30
+
+model_checkpoint:
+    name: ModelCheckpoint
+    params:
+        dirpath: ./outputs
+        filename: mnist
+```
+
+**[User Code]**
+
+```python
+# Models
+@ModelRegistry.register()
+class MnistModel(BaseModel):
+    def __init__(self, num_classes=10):
+        super(MnistModel, self).__init__()
+        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
+        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
+        self.conv2_drop = nn.Dropout2d()
+        self.fc1 = nn.Linear(320, 50)
+        self.fc2 = nn.Linear(50, num_classes)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = F.relu(F.max_pool2d(self.conv1(x), 2))
+        x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
+        x = x.view(-1, 320)
+        x = F.relu(self.fc1(x))
+        x = F.dropout(x, training=self.training)
+        x = self.fc2(x)
+        return F.log_softmax(x, dim=1)
+
+    def loss(self, output: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        return F.nll_loss(output, target)
+
+    def metric(self, output: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        with torch.no_grad():
+            pred = torch.argmax(output, dim=1)
+            correct = torch.sum(pred == target).item()
+        return correct / len(target)
+
+# Model Container
+@ModelContainerRegistry.register()
+class MNISTModelContainer(BaseModelContainer):
+    """Abstract Class for Model Container"""
+
+    def __init__(self,
+                 model: Type["BaseModel"],
+                 optimizer: Type["BaseOptimizer"],
+                 scheduler: Optional["BaseScheduler"],
+                 *args: Any, **kwargs: Any):
+        """
+        Args:
+            model (nn.Module): PyTorch model
+        """
+        super().__init__(model=model, optimizer=optimizer,
+                         scheduler=scheduler, *args, **kwargs)
+
+    def forward(self, x: torch.Tensor):
+        return self.model(x)
+
+    def shared_step(self, x: torch.Tensor, y: torch.Tensor):
+        output = self.forward(x)
+        loss = self.model.loss(output=output, target=y)
+        return output, loss
+
+    def training_step(
+            self, batch: Tuple[torch.Tensor, torch.Tensor],
+            batch_idx: int):
+        x, y = batch
+        _, loss = self.shared_step(x=x, y=y)
+        return {"train/loss": loss, "loss": loss}
+
+    def training_epoch_end(self, training_step_outputs):
+        pass
+
+    def validation_step(self, batch, batch_idx):
+        x, y = batch
+        output, loss = self.shared_step(x=x, y=y)
+        metric = self.model.metric(output=output, target=y)
+        return {
+            "valid/loss": loss,
+            "valid/metric": metric,
+            "loss": loss,
+        }
+
+    def validation_epoch_end(self, validation_step_outputs):
+        pass
+
+    def _shared_eval_step(self, batch, batch_idx):
+        x, y = batch
+        y_hat = self.model(x)
+        loss = F.cross_entropy(y_hat, y)
+        acc = accuracy(y_hat, y)
+        return loss, acc
+
+    def test_step(
+            self, batch: Tuple[torch.Tensor, torch.Tensor],
+            batch_idx: int):
+        x, y = batch
+        _, loss = self.shared_step(x=x, y=y)
+        return {"test/loss": loss, "loss": loss}
+```
+
+## Expected difficulties
+
+1. Generalized structure that satisfies various architectures such as Hugging Face, Transformer, Encoder-Decoder, etc.
+2. Generalized structure that can perform various tasks such as vision, nlp, and voice processing
+
+## Installation
 
 ```bash
 poetry install
 ```
 
-## 실행방법
+## Execution
 
--   패키지 설치
+### Packages
 
 ```bash
 poetry build
+python3 -m pip install ./dist/ml_training_template-0.0.1.dev0-py3-none-any.whl
 ```
 
--   example/mnist의 코드 실행
+### Tutorial
 
 ```bash
 export PYATHONPATH="[PROJECT_DIR]/example/mnist"
 python3 train.py
 ```
 
-## 아키텍쳐
+## Architecture
 
 대부분의 인터페이스는 PyTorch Lightning의 인터페이스를 따른다.
 PyTorch Lightning을 한단계 더 추상화하여
-
-## 목표
-
-### 첫번째 목표
-
-MNIST 모델을 Backbone으로 하는 템플릿 코드
-
-### End Goals
-
-Face Recognition 모델
-
-## 아키텍쳐
-
-아직은 막연하게 DI, IoC개념을 적극적으로 활용하는 것을 고려하고있다.
