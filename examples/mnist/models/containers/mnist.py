@@ -3,9 +3,13 @@ from typing import Tuple
 import torch
 import torch.nn as nn
 
-from app.core.interfaces.models.containers import BaseModelContainer
+from ml_training_template.core.interfaces.models.containers import (
+    BaseModelContainer,
+)
+from ml_training_template.core.patterns.registry import ModelContainerRegistry
 
 
+@ModelContainerRegistry.register("MNIST")
 class MNISTModelContainer(BaseModelContainer):
     """Abstract Class for Model Container"""
 
