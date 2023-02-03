@@ -224,20 +224,20 @@ Epoch 0:  12%|██████                                             | 3
 
 ## Installation
 
+### For Developments
+
 ```bash
 poetry install
 ```
 
-## Execution
-
-### Packages
+### Build Packages
 
 ```bash
 poetry build
 python3 -m pip install ./dist/ml_training_template-0.0.1.dev0-py3-none-any.whl
 ```
 
-### Tutorial
+## Runnable Examples
 
 ```bash
 export PYATHONPATH="[PROJECT_DIR]/example/mnist"
