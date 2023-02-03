@@ -246,5 +246,4 @@ python3 train.py
 
 ## Architecture
 
-대부분의 인터페이스는 PyTorch Lightning의 인터페이스를 따른다.
-PyTorch Lightning을 한단계 더 추상화하여
+![architecture](images/architecture.png)
